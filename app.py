@@ -172,14 +172,14 @@ if file:
 
                 elif missing_option == "Fill with Mean/Mode":
                     for col in df_cleaned.columns:
-                        if df_cleaned[col].dtype in ["int64", "float64"]:
+                        if pd.api.types.is_numeric_dtype(df_cleaned[col]):
                             df_cleaned[col].fillna(df_cleaned[col].mean(), inplace=True)
                         else:
                             df_cleaned[col].fillna(df_cleaned[col].mode()[0], inplace=True)
 
                 elif missing_option == "Fill with Median/Mode":
                     for col in df_cleaned.columns:
-                        if df_cleaned[col].dtype in ["int64", "float64"]:
+                        if pd.api.types.is_numeric_dtype(df_cleaned[col]):
                             df_cleaned[col].fillna(df_cleaned[col].median(), inplace=True)
                         else:
                             df_cleaned[col].fillna(df_cleaned[col].mode()[0], inplace=True)
@@ -433,7 +433,7 @@ if file:
         fig = px.scatter(df, x=x, y=y, size=size)
 
     if fig:
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     
 
     def classify_columns(df):
@@ -443,13 +443,13 @@ if file:
             unique_vals = df[col].nunique()
             dtype = df[col].dtype
 
-            if dtype == "object":
+            if pd.api.types.is_string_dtype(df[col]) or dtype == "object":
                 if unique_vals <= 15:
                     col_info[col] = "categorical_low"
                 else:
                     col_info[col] = "categorical_high"
 
-            elif np.issubdtype(dtype, np.number):
+            elif pd.api.types.is_numeric_dtype(df[col]):
                 if unique_vals <= 10:
                     col_info[col] = "categorical_numeric"
                 else:
@@ -606,7 +606,7 @@ if file:
                 #Show Graph
 
                 if fig:
-                    st.plotly_chart(fig, use_container_width=True, key=f"chart_{r['chart']}_{i}")
+                    st.plotly_chart(fig, width="stretch", key=f"chart_{r['chart']}_{i}")
 
                 #AI Graph Explanation
 
